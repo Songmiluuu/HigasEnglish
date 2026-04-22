@@ -354,23 +354,41 @@
     </div>
 
     <script>
-        // Khởi tạo hiển thị các icon từ thư viện Lucide
-        lucide.createIcons();
+    // Khởi tạo icon
+    lucide.createIcons();
 
-        // Gán năm hiện tại vào Footer
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    // Footer year
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        // Xử lý sự kiện Submit Form
-        document.getElementById('consultForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Chặn hành động reload trang mặc định
-            
-            // Lấy dữ liệu
-            const name = document.getElementById('inputName').value;
-            const phone = document.getElementById('inputPhone').value;
-            
-            // Hiển thị thông báo (tương tự như alert của bản React)
-            alert(`Cảm ơn ${name}! Higas sẽ liên hệ bạn qua số ${phone} trong thời gian sớm nhất.`);
-        });
-    </script>
+    // 🔥 API của bạn
+    const API_URL = "https://script.google.com/macros/s/AKfycbzIUi3pcOEZZUDT9dcR5tS0rpxwNIUBM5V2hfY1Di-xjMt-VoI-q1-9-HCnb7Cqvg4yUw/exec";
+
+    // Submit form
+    document.getElementById('consultForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('inputName').value;
+        const phone = document.getElementById('inputPhone').value;
+        const course = document.getElementById('inputCourse').value;
+
+        try {
+            // gửi dữ liệu
+            await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    name,
+                    phone,
+                    course
+                })
+            });
+
+            alert(`✅ Cảm ơn ${name}! Higas sẽ liên hệ bạn sớm.`);
+            this.reset();
+
+        } catch (err) {
+            alert("❌ Gửi thất bại, thử lại nhé!");
+        }
+    });
+</script>
 </body>
 </html>
