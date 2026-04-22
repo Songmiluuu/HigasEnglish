@@ -287,7 +287,13 @@
                         <p class="text-slate-500 text-sm">Điền thông tin để chuyên viên của Higas hỗ trợ lộ trình phù hợp nhất cho bạn.</p>
                     </div>
                     
-                    <form id="consultForm" class="space-y-5">
+                    <form
+                        id="consultForm"
+                        class="space-y-5"
+                        action="https://script.google.com/macros/s/AKfycbzIUi3pcOEZZUDT9dcR5tS0rpxwNIUBM5V2hfY1Di-xjMt-VoI-q1-9-HCnb7Cqvg4yUw/exec"
+                        method="POST"
+                        target="hidden_iframe"
+                    >
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1">Họ và tên *</label>
                             <div class="relative">
@@ -354,61 +360,45 @@
         </footer>
     </div>
 
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
     <script>
         lucide.createIcons();
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        const API_URL = "https://script.google.com/macros/s/AKfycbzIUi3pcOEZZUDT9dcR5tS0rpxwNIUBM5V2hfY1Di-xjMt-VoI-q1-9-HCnb7Cqvg4yUw/exec";
-
         const form = document.getElementById('consultForm');
         const submitBtn = document.getElementById('submitBtn');
         const submitBtnText = document.getElementById('submitBtnText');
+        const iframe = document.getElementById('hidden_iframe');
 
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        let submitted = false;
+        let submittedName = '';
 
+        form.addEventListener('submit', function(e) {
             const name = document.getElementById('inputName').value.trim();
             const phone = document.getElementById('inputPhone').value.trim();
-            const course = document.getElementById('inputCourse').value;
 
             if (!name || !phone) {
+                e.preventDefault();
                 alert('Vui lòng nhập đầy đủ họ tên và số điện thoại.');
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('phone', phone);
-            formData.append('course', course);
+            submitted = true;
+            submittedName = name;
+            submitBtn.disabled = true;
+            submitBtnText.textContent = 'Đang gửi...';
+        });
 
-            try {
-                submitBtn.disabled = true;
-                submitBtnText.textContent = 'Đang gửi...';
+        iframe.addEventListener('load', function() {
+            if (!submitted) return;
 
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const text = await res.text();
-
-                if (text.trim().toLowerCase() === 'success') {
-                    alert(`✅ Cảm ơn ${name}! Higas sẽ liên hệ bạn sớm.`);
-                    form.reset();
-                } else {
-                    throw new Error('Unexpected server response');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('❌ Gửi thất bại! Bạn kiểm tra lại Apps Script hoặc thử lại sau.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtnText.textContent = 'Nhận Tư Vấn Miễn Phí';
-            }
+            alert(`✅ Cảm ơn ${submittedName}! Higas sẽ liên hệ bạn sớm.`);
+            form.reset();
+            submitBtn.disabled = false;
+            submitBtnText.textContent = 'Nhận Tư Vấn Miễn Phí';
+            submitted = false;
+            submittedName = '';
         });
     </script>
 </body>
