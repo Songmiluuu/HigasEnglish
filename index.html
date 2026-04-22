@@ -365,30 +365,30 @@
 
     // Submit form
     document.getElementById('consultForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        const name = document.getElementById('inputName').value;
-        const phone = document.getElementById('inputPhone').value;
-        const course = document.getElementById('inputCourse').value;
+    const name = document.getElementById('inputName').value;
+    const phone = document.getElementById('inputPhone').value;
+    const course = document.getElementById('inputCourse').value;
 
-        try {
-            // gửi dữ liệu
-            await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    name,
-                    phone,
-                    course
-                })
-            });
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("phone", phone);
+    formData.append("course", course);
 
-            alert(`✅ Cảm ơn ${name}! Higas sẽ liên hệ bạn sớm.`);
-            this.reset();
+    try {
+        await fetch("https://script.google.com/macros/s/AKfycbzIUi3pcOEZZUDT9dcR5tS0rpxwNIUBM5V2hfY1Di-xjMt-VoI-q1-9-HCnb7Cqvg4yUw/exec", {
+            method: "POST",
+            body: formData
+        });
 
-        } catch (err) {
-            alert("❌ Gửi thất bại, thử lại nhé!");
-        }
-    });
+        alert(`✅ Cảm ơn ${name}! Higas sẽ liên hệ bạn sớm.`);
+        this.reset();
+
+    } catch (err) {
+        alert("❌ Lỗi gửi form!");
+    }
+});
 </script>
 </body>
 </html>
